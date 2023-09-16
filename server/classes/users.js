@@ -5,9 +5,9 @@ class Users
         this.people = [];
     }
 
-    addPerson( id, name )
+    addPerson( id, name, room )
     {
-        let person = { id, name };
+        let person = { id, name, room };
         this.people.push( person );
         return this.people;
     }
@@ -25,7 +25,8 @@ class Users
 
     getPeopleByRoom( room )
     {
-        // TODO
+        let peopleInRoom = this.people.filter( person => person.room === room );
+        return peopleInRoom;
     }
 
     deletePerson( id )

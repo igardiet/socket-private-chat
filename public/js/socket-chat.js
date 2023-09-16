@@ -1,8 +1,7 @@
 const socket = io();
+let params = new URLSearchParams( window.location.search );
 
-const params = new URLSearchParams( window.location.search );
-
-if ( !params.has( 'name' ) || !params.has('room') )
+if ( !params.has( 'name' ) || !params.has( 'room' ) )
 {
     window.location = 'index.html';
     throw new Error( 'Name and room are mandatory' );
@@ -10,7 +9,8 @@ if ( !params.has( 'name' ) || !params.has('room') )
 
 const user =
 {
-    name: params.get( 'name' )
+    name: params.get( 'name' ),
+    room: params.get( 'room' )
 };
 
 socket.on( 'connect', () =>
@@ -19,7 +19,7 @@ socket.on( 'connect', () =>
 
     socket.emit( 'enterChat', user, ( answer ) =>
     {
-        console.log( 'Users connected', answer );
+        renderUsers( answer );
     } );
 } );
 
@@ -31,8 +31,12 @@ socket.on( 'disconnect', () => console.log( 'Server connection has been lost' ) 
 //         message: 'Message'
 //     }, ( answer ) => console.log( 'Server response: ', answer ) );
 
-socket.on( 'createMessage', ( message ) => console.log( 'Server:', message ) );
+socket.on( 'createMessage', ( message ) =>
+{
+    renderMessages( message, false );
+    scrollBottom();
+} );
 
-socket.on( 'personList', ( people ) => console.log( people ) );
+socket.on( 'personList', ( people ) => renderUsers( people ) );
 
-socket.on('privateMessage', (message) => console.log('Private message:', message));
+socket.on( 'privateMessage', ( message ) => console.log( 'Private message:', message ) );
